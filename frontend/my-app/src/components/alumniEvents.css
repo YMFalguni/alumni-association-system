@@ -1,0 +1,172 @@
+
+        :root {
+            --sidebar-width: 260px;
+            --primary-bg: #f0f4f9; 
+            --sidebar-light-black: #1c1c21; 
+            --accent-blue: #007bff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-light-black);
+            color: white;
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 1100;
+            transition: 0.3s;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.65);
+            padding: 15px 25px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .sidebar .nav-link i { margin-right: 15px; width: 20px; font-size: 1.1rem; }
+
+        /* --- Main Wrapper --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Navbar --- */
+        .navbar-alumni {
+            width: calc(100% - var(--sidebar-width));
+            left: var(--sidebar-width) !important;
+            background: rgba(28, 28, 33, 0.9) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 30px;
+            z-index: 1050;
+        }
+
+        .content-body {
+            padding: 110px 40px 40px 40px;
+            flex-grow: 1;
+        }
+
+        /* --- Search Bar --- */
+        .search-container {
+            background: #fff;
+            border-radius: 15px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        /* --- Event Cards --- */
+        .event-card {
+            background: #fff;
+            border-radius: 20px;
+            border: none;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .event-img {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .event-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 123, 255, 0.9);
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .event-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .event-info {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .event-info i {
+            color: var(--accent-blue);
+            width: 20px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #000 !important;
+            padding: 60px 0 30px;
+            width: 100%;
+            color: white;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: rgba(255,255,255,0.7) !important;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        footer a:hover { color: #007bff !important; }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-wrapper { margin-left: 0; width: 100%; }
+            .navbar-alumni { width: 100%; left: 0 !important; }
+        }
+   
