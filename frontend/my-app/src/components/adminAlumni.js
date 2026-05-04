@@ -275,6 +275,7 @@ function AdminAlumni() {
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Email Address</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Phone</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Employment Status</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Salary</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -297,6 +298,9 @@ function AdminAlumni() {
                             {person.employmentStatus}
                           </span>
                         </td>
+                        <td className="px-6 py-4 text-sm text-slate-600">
+                          {person.salary ? `${person.salary} LPA` : 'N/A'}
+                        </td>
                         <td className="px-6 py-4 text-right">
                           <button 
                             onClick={() => deleteAlumni(person._id)}
@@ -309,7 +313,7 @@ function AdminAlumni() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="px-6 py-10 text-center text-slate-400 text-sm italic">
+                      <td colSpan="6" className="px-6 py-10 text-center text-slate-400 text-sm italic">
                         No alumni records found.
                       </td>
                     </tr>

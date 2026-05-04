@@ -75,12 +75,15 @@ function AdminAnalytics() {
     const initializeCharts = (placements, departments) => {
         const destroyChart = (id) => { if (chartRefs.current[id]) chartRefs.current[id].destroy(); };
 
+        // Filter out null/invalid years from placements
+        const filteredPlacements = placements.filter(p => p._id && p._id !== null && !isNaN(p._id));
+
         // Placement Trends Bar Chart (using yearly placements data)
         destroyChart('placement');
         const ctxPlacement = document.getElementById('placementChart');
-        if (ctxPlacement && placements.length > 0) {
-            const labels = placements.map(p => `Year ${p._id}`);
-            const data = placements.map(p => p.placementPercentage);
+        if (ctxPlacement && filteredPlacements.length > 0) {
+            const labels = filteredPlacements.map(p => `Year ${p._id}`);
+            const data = filteredPlacements.map(p => p.placementPercentage);
             
             chartRefs.current.placement = new Chart(ctxPlacement, {
                 type: 'bar',
@@ -118,12 +121,15 @@ function AdminAnalytics() {
             });
         }
 
+        // Filter out null/unknown departments
+        const filteredDepartments = departments.filter(d => d._id && d._id !== null && d._id !== 'Unknown' && d._id !== '');
+
         // Department Distribution Bar Chart
         destroyChart('dept');
         const ctxDept = document.getElementById('departmentChart');
-        if (ctxDept && departments.length > 0) {
-            const deptLabels = departments.map(d => d._id || 'Unknown');
-            const deptData = departments.map(d => d.count);
+        if (ctxDept && filteredDepartments.length > 0) {
+            const deptLabels = filteredDepartments.map(d => d._id);
+            const deptData = filteredDepartments.map(d => d.count);
             const colors = ['#d97706', '#f59e0b', '#fbbf24', '#fef3c7', '#dbeafe', '#93c5fd'];
             
             chartRefs.current.dept = new Chart(ctxDept, {
@@ -188,7 +194,7 @@ function AdminAnalytics() {
         const data = await response.json();
         
         if (response.ok) {
-            setAiInsights(data.insights);
+            setAiInsights(formatAIInsights(data.insights));
         } else {
             setAiInsights(`AI service error: ${data.error || "Service temporarily unavailable"}`);
         }
@@ -198,7 +204,107 @@ function AdminAnalytics() {
     } finally {
         setIsAnalyzing(false);
     }
-};
+    };
+
+    // 4. Format AI Insights into structured HTML
+    const formatAIInsights = (rawInsights) => {
+        // Split the response into sections based on common patterns
+        const sections = {
+            title: "AI-Powered Placement Strategy Report",
+            summary: "",
+            keyInsights: [],
+            detailedAnalysis: "",
+            recommendations: []
+        };
+
+        // Try to extract sections from the AI response
+        const lines = rawInsights.split('\n').filter(line => line.trim());
+        let currentSection = 'summary';
+
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            
+            // Check for section headers
+            if (trimmedLine.toLowerCase().includes('overall assessment') || 
+                trimmedLine.toLowerCase().includes('assessment') ||
+                trimmedLine.toLowerCase().includes('summary')) {
+                currentSection = 'summary';
+                continue;
+            } else if (trimmedLine.toLowerCase().includes('key insights') || 
+                      trimmedLine.toLowerCase().includes('insights')) {
+                currentSection = 'keyInsights';
+                continue;
+            } else if (trimmedLine.toLowerCase().includes('detailed analysis') || 
+                      trimmedLine.toLowerCase().includes('analysis')) {
+                currentSection = 'detailedAnalysis';
+                continue;
+            } else if (trimmedLine.toLowerCase().includes('recommendations') || 
+                      trimmedLine.toLowerCase().includes('strategies') ||
+                      trimmedLine.toLowerCase().includes('action items')) {
+                currentSection = 'recommendations';
+                continue;
+            }
+
+            // Add content to current section
+            if (currentSection === 'keyInsights' && (trimmedLine.startsWith('-') || trimmedLine.startsWith('•'))) {
+                sections.keyInsights.push(trimmedLine.substring(1).trim());
+            } else if (currentSection === 'recommendations' && (trimmedLine.startsWith('-') || trimmedLine.startsWith('•') || /^\d+\./.test(trimmedLine))) {
+                sections.recommendations.push(trimmedLine.replace(/^\d+\.\s*/, '').trim());
+            } else if (currentSection === 'summary' && sections.summary === '') {
+                sections.summary = trimmedLine;
+            } else if (currentSection === 'detailedAnalysis') {
+                sections.detailedAnalysis += (sections.detailedAnalysis ? ' ' : '') + trimmedLine;
+            } else if (currentSection === 'summary' && sections.summary) {
+                sections.summary += ' ' + trimmedLine;
+            }
+        }
+
+        // If parsing failed, use the raw content as summary
+        if (!sections.summary && !sections.keyInsights.length && !sections.detailedAnalysis && !sections.recommendations.length) {
+            sections.summary = rawInsights;
+        }
+
+        // Generate formatted HTML
+        return `
+<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #374151;">
+    <h1 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 16px; border-bottom: 2px solid #f59e0b; padding-bottom: 8px;">
+        ${sections.title}
+    </h1>
+    
+    ${sections.summary ? `
+    <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">Summary</h2>
+        <p style="font-size: 14px; color: #4b5563;">${sections.summary}</p>
+    </div>
+    ` : ''}
+    
+    ${sections.keyInsights.length > 0 ? `
+    <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 12px;">Key Insights</h2>
+        <ul style="font-size: 14px; color: #4b5563; padding-left: 20px;">
+            ${sections.keyInsights.map(insight => `<li style="margin-bottom: 6px;">${insight}</li>`).join('')}
+        </ul>
+    </div>
+    ` : ''}
+    
+    ${sections.detailedAnalysis ? `
+    <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">Detailed Analysis</h2>
+        <p style="font-size: 14px; color: #4b5563;">${sections.detailedAnalysis}</p>
+    </div>
+    ` : ''}
+    
+    ${sections.recommendations.length > 0 ? `
+    <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 12px;">Recommendations</h2>
+        <ul style="font-size: 14px; color: #4b5563; padding-left: 20px;">
+            ${sections.recommendations.map(rec => `<li style="margin-bottom: 8px;">${rec}</li>`).join('')}
+        </ul>
+    </div>
+    ` : ''}
+</div>`.trim();
+    };
+
 
     // 4. Check Available AI Models
     const checkAvailableModels = async () => {
@@ -221,7 +327,6 @@ function AdminAnalytics() {
             setAiInsights("Error checking available models. Please try again.");
         }
     };
-
 
   const exportReport = async () => {
     if (!chartRefs.current.placement || !chartRefs.current.dept) {
@@ -287,8 +392,8 @@ function AdminAnalytics() {
                     const imgWidth = pageWidth - 40;
                     const imgHeight = (imgWidth * 3) / 4; // 4:3 aspect ratio
 
-                    // Check for page overflow
-                    if (yPosition + imgHeight > pageHeight - 20) {
+                    // Check for page overflow - ensure enough space for chart + title + margin
+                    if (yPosition + imgHeight + 25 > pageHeight - 20) {
                         doc.addPage();
                         yPosition = 20;
                     }
@@ -311,9 +416,41 @@ function AdminAnalytics() {
             }
         }
 
-        // 5. AI Insights Section
+        // 5. AI Insights Section - Multi-page support
         console.log('Adding AI insights...');
-        if (yPosition > pageHeight - 40) {
+        
+        // Function to add text with automatic page breaks
+        const addTextWithPageBreaks = (text, fontSize = 10, lineHeight = 5) => {
+            doc.setFontSize(fontSize);
+            doc.setTextColor(75, 85, 99);
+            
+            const lines = doc.splitTextToSize(text, pageWidth - 40);
+            let currentY = yPosition;
+            
+            for (let i = 0; i < lines.length; i++) {
+                // Check if we need a new page
+                if (currentY > pageHeight - 20) {
+                    doc.addPage();
+                    currentY = 20; // Reset to top margin
+                    
+                    // Re-add header on new page
+                    doc.setFontSize(14);
+                    doc.setTextColor(31, 41, 55);
+                    doc.text("AI-Powered Placement Strategy Recommendations (continued)", 20, currentY);
+                    currentY += 8;
+                    doc.setFontSize(fontSize);
+                    doc.setTextColor(75, 85, 99);
+                }
+                
+                doc.text(lines[i], 20, currentY);
+                currentY += lineHeight;
+            }
+            
+            return currentY;
+        };
+
+        // Add AI insights header
+        if (yPosition > pageHeight - 60) {
             doc.addPage();
             yPosition = 20;
         }
@@ -321,20 +458,39 @@ function AdminAnalytics() {
         doc.setFontSize(14);
         doc.setTextColor(31, 41, 55);
         doc.text("AI-Powered Placement Strategy Recommendations", 20, yPosition);
-        yPosition += 8;
+        yPosition += 10;
 
-        doc.setFontSize(10);
-        doc.setTextColor(75, 85, 99);
-        const splitInsights = doc.splitTextToSize(aiInsights, pageWidth - 40);
-        doc.text(splitInsights, 20, yPosition);
+        // Add AI insights content with multi-page support
+        if (aiInsights && aiInsights.trim()) {
+            // Remove HTML tags for PDF (simple text extraction)
+            const cleanInsights = aiInsights
+                .replace(/<[^>]*>/g, '') // Remove HTML tags
+                .replace(/&nbsp;/g, ' ') // Replace HTML spaces
+                .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+                .trim();
+            
+            yPosition = addTextWithPageBreaks(cleanInsights, 10, 5);
+        } else {
+            yPosition = addTextWithPageBreaks("No AI insights available. Please generate insights first.", 10, 5);
+        }
 
-        // 6. Final Save
+        // 6. Footer on last page
+        const totalPages = doc.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setTextColor(156, 163, 175);
+            doc.text(`Page ${i} of ${totalPages}`, pageWidth - 30, pageHeight - 10);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, pageHeight - 10);
+        }
+
+        // 7. Final Save
         console.log('Saving PDF...');
-        const fileName = `Alumni_Report_${new Date().getTime()}.pdf`;
+        const fileName = `Alumni_Analytics_Report_${new Date().getTime()}.pdf`;
         doc.save(fileName);
         
         console.log('PDF export completed successfully!');
-        alert('PDF report generated successfully!');
+        alert(`PDF report generated successfully! (${totalPages} pages)`);
 
     } catch (error) {
         console.error('PDF Export Error:', error);
@@ -466,8 +622,8 @@ function AdminAnalytics() {
                             </button>
                         </div>
                     </div>
-                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 italic text-slate-600 text-left leading-relaxed whitespace-pre-wrap">
-                        "{aiInsights}"
+                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 text-left leading-relaxed" 
+                         dangerouslySetInnerHTML={{ __html: aiInsights }}>
                     </div>
                 </div>
             </main>
