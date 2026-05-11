@@ -67,24 +67,28 @@ function AlumniDashboard() {
  
   const barChartData = {
     labels: stats.yearlyPlacements?.length > 0 
-      ? stats.yearlyPlacements.map(item => `Year ${item._id}`) 
+      ? stats.yearlyPlacements
+          .filter(item => item._id && item._id !== null && item._id !== undefined && !isNaN(item._id) && typeof item.placementPercentage === 'number' && item.placementPercentage >= 0)
+          .map(item => `Year ${item._id}`) 
       : ['2022', '2023', '2024', '2025', '2026'], 
 
     datasets: [
       {
         label: 'Placement Percentage (%)',
         data: stats.yearlyPlacements?.length > 0 
-          ? stats.yearlyPlacements.map(item => {
-              // Use server-calculated percentage if available, otherwise calculate on client
-              if (item.placementPercentage !== undefined) {
-                return parseFloat(item.placementPercentage);
-              }
-              // Fallback client-side calculation
-              const percentage = item.totalInYear > 0 
-                ? ((item.placedCount / item.totalInYear) * 100).toFixed(1) 
-                : 0;
-              return parseFloat(percentage);
-            })
+          ? stats.yearlyPlacements
+              .filter(item => item._id && item._id !== null && item._id !== undefined && !isNaN(item._id) && typeof item.placementPercentage === 'number' && item.placementPercentage >= 0)
+              .map(item => {
+                // Use server-calculated percentage if available, otherwise calculate on client
+                if (item.placementPercentage !== undefined) {
+                  return parseFloat(item.placementPercentage);
+                }
+                // Fallback client-side calculation
+                const percentage = item.totalInYear > 0 
+                  ? ((item.placedCount / item.totalInYear) * 100).toFixed(1) 
+                  : 0;
+                return parseFloat(percentage);
+              })
           : [0, 0, 0, 0, 0], 
         backgroundColor: ['#d97706', '#f59e0b', '#fbbf24', '#cbd5e1', '#6b7280'],
         borderRadius: 8,
@@ -129,7 +133,7 @@ function AlumniDashboard() {
       }
     },
     animation: {
-      duration: 300 // Smooth animation on update
+      duration: 300 
     }
   };
 
@@ -219,15 +223,14 @@ function AlumniDashboard() {
   };
 
   useEffect(() => {
-    // Initial fetch
+    
     fetchDashboardStats();
     fetchProfileCompletion();
 
-    // Setup auto-refresh every 15 seconds for real-time updates
     intervalRef.current = setInterval(() => {
       fetchDashboardStats(false);
-      fetchProfileCompletion(); // Also refresh profile completion
-    }, 15000); // Refresh every 15 seconds
+      fetchProfileCompletion(); 
+    }, 15000); 
 
     // Cleanup interval on component unmount
     return () => {
@@ -236,10 +239,6 @@ function AlumniDashboard() {
       }
     };
   }, []);
-
-  // Old useEffect code to remove
-  // (This will be replaced by the new fetchDashboardStats function above)
-
 
   return (
     <div className="flex min-h-screen bg-[#f8fafc] font-sans text-left">
@@ -280,14 +279,7 @@ function AlumniDashboard() {
             <p className="text-xs text-slate-500">Alumni Dashboard & Analytics </p>
           </div>
           <div className="flex items-center gap-3">
-            {/* <button 
-              onClick={handleManualRefresh}
-              disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl font-semibold text-sm transition-colors border-0 cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
-            </button> */}
+           
             <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">A</div>
           </div>
         </header>

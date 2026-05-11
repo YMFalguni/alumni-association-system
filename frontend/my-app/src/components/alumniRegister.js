@@ -24,34 +24,33 @@ function AlumniRegister() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   
-  // पासवर्ड मॅचिंग चेक
   if (credentials.password !== credentials.cpassword) {
     alert("Passwords do not match");
     return;
   }
 
   try {
-    // बॅकएंडला नेमका कोणता डेटा हवाय तेवढाच पाठवूया
+    
     const alumniData = {
       firstName: credentials.firstName,
       lastName: credentials.lastName,
       email: credentials.email,
       password: credentials.password,
       phoneNumber: credentials.phoneNumber,
-      graduationYear: parseInt(credentials.graduationYear), // Number मध्ये कन्व्हर्ट केले
+      graduationYear: parseInt(credentials.graduationYear), 
       department: credentials.department,
       employmentStatus: credentials.employmentStatus,
       salary: credentials.salary ? parseInt(credentials.salary) : undefined
     };
 
-    console.log("Sending Data to Backend:", alumniData); // चेक करण्यासाठी
+    console.log("Sending Data to Backend:", alumniData); 
 
     const response = await fetch("http://localhost:5000/api/auth/createalumni", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json" 
       },
-      body: JSON.stringify(alumniData), // cpassword काढून फक्त गरजेचा डेटा पाठवला
+      body: JSON.stringify(alumniData), 
     });
 
     const json = await response.json();
@@ -139,8 +138,8 @@ function AlumniRegister() {
                 <select name="department" value={credentials.department} onChange={onChange} required className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-sm appearance-none transition-all">
                   <option value="">Select Department</option>
                   <option value="Computer Engineering">Computer Engineering</option>
-                  <option value="Information Technology">Information Technology</option>
-                  <option value="Electronics">Electronics</option>
+                  <option value="E&TC">E&TC</option>
+                  <option value="Electrical">Electrical</option>
                   <option value="Mechanical">Mechanical</option>
                 </select>
               </div>

@@ -5,7 +5,6 @@ const Navbar = ({ user = { token: null, role: null, name: "" }, setUser }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // remove only auth-related items instead of clearing all app storage
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     if (setUser) setUser({ token: null, role: null, name: "" });
@@ -29,16 +28,6 @@ const Navbar = ({ user = { token: null, role: null, name: "" }, setUser }) => {
                 <li className="nav-item"><Link className="nav-link" to="/contactus">Contact</Link></li>
               </>
             
-              <>
-                {/* <li className="nav-item">
-                  <Link className="nav-link" to={user.role === 'admin' ? '/adminDashboard' : '/alumniDashboard'}>
-                    My Dashboard
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <button type="button" onClick={handleLogout} className="btn nav-link" style={{ border: 'none', background: 'none' }}>Logout</button>
-                </li> */}
-              </>
           </ul>
         </div>
       </div>

@@ -75,10 +75,10 @@ function AdminAnalytics() {
     const initializeCharts = (placements, departments) => {
         const destroyChart = (id) => { if (chartRefs.current[id]) chartRefs.current[id].destroy(); };
 
-        // Filter out null/invalid years from placements
-        const filteredPlacements = placements.filter(p => p._id && p._id !== null && !isNaN(p._id));
+        
+        const filteredPlacements = placements.filter(p => p._id && p._id !== null && p._id !== undefined && !isNaN(p._id) && typeof p.placementPercentage === 'number' && p.placementPercentage >= 0);
 
-        // Placement Trends Bar Chart (using yearly placements data)
+        
         destroyChart('placement');
         const ctxPlacement = document.getElementById('placementChart');
         if (ctxPlacement && filteredPlacements.length > 0) {
@@ -121,7 +121,6 @@ function AdminAnalytics() {
             });
         }
 
-        // Filter out null/unknown departments
         const filteredDepartments = departments.filter(d => d._id && d._id !== null && d._id !== 'Unknown' && d._id !== '');
 
         // Department Distribution Bar Chart
@@ -208,7 +207,6 @@ function AdminAnalytics() {
 
     // 4. Format AI Insights into structured HTML
     const formatAIInsights = (rawInsights) => {
-        // Split the response into sections based on common patterns
         const sections = {
             title: "AI-Powered Placement Strategy Report",
             summary: "",
@@ -217,7 +215,6 @@ function AdminAnalytics() {
             recommendations: []
         };
 
-        // Try to extract sections from the AI response
         const lines = rawInsights.split('\n').filter(line => line.trim());
         let currentSection = 'summary';
 
@@ -259,7 +256,6 @@ function AdminAnalytics() {
             }
         }
 
-        // If parsing failed, use the raw content as summary
         if (!sections.summary && !sections.keyInsights.length && !sections.detailedAnalysis && !sections.recommendations.length) {
             sections.summary = rawInsights;
         }
@@ -384,11 +380,9 @@ function AdminAnalytics() {
             if (config.chart) {
                 try {
                     console.log(`Processing chart: ${config.title}`);
-                    
-                    // Use Chart.js built-in method to get base64 image
+                   
                     const imgData = config.chart.canvas.toDataURL("image/png", 1.0);
-                    
-                    // Calculate dimensions (assuming 4:3 aspect ratio for charts)
+                   
                     const imgWidth = pageWidth - 40;
                     const imgHeight = (imgWidth * 3) / 4; // 4:3 aspect ratio
 
@@ -428,12 +422,10 @@ function AdminAnalytics() {
             let currentY = yPosition;
             
             for (let i = 0; i < lines.length; i++) {
-                // Check if we need a new page
+                
                 if (currentY > pageHeight - 20) {
                     doc.addPage();
-                    currentY = 20; // Reset to top margin
-                    
-                    // Re-add header on new page
+                    currentY = 20; 
                     doc.setFontSize(14);
                     doc.setTextColor(31, 41, 55);
                     doc.text("AI-Powered Placement Strategy Recommendations (continued)", 20, currentY);
@@ -464,9 +456,9 @@ function AdminAnalytics() {
         if (aiInsights && aiInsights.trim()) {
             // Remove HTML tags for PDF (simple text extraction)
             const cleanInsights = aiInsights
-                .replace(/<[^>]*>/g, '') // Remove HTML tags
-                .replace(/&nbsp;/g, ' ') // Replace HTML spaces
-                .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+                .replace(/<[^>]*>/g, '') 
+                .replace(/&nbsp;/g, ' ') 
+                .replace(/\n\s*\n/g, '\n') 
                 .trim();
             
             yPosition = addTextWithPageBreaks(cleanInsights, 10, 5);

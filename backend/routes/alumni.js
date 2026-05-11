@@ -45,7 +45,6 @@ router.get('/me', fetchUser, async (req, res) => {
 router.put('/updatealumni/:id', fetchUser, async (req, res) => {
     const { firstName, lastName, phoneNumber, email, employmentStatus, department, graduationYear, salary } = req.body;
     try {
-        // Create a newAlumni object with updated fields
         const newAlumni = {};
         if (firstName) { newAlumni.firstName = firstName };
         if (lastName) { newAlumni.lastName = lastName };
@@ -56,11 +55,10 @@ router.put('/updatealumni/:id', fetchUser, async (req, res) => {
         if (graduationYear) { newAlumni.graduationYear = graduationYear };
         if (salary) { newAlumni.salary = parseInt(salary) };
 
-        // Find the alumni to be updated and update it
         let alumni = await Alumni.findById(req.params.id);
         if (!alumni) { return res.status(404).send("Not Found") }
 
-        // Security Check: Only allow user to update their own profile (or add Admin check)
+        
         if (alumni._id.toString() !== req.user.id) {
             return res.status(401).send("Not Allowed");
         }
@@ -81,7 +79,6 @@ router.delete('/deletealumni/:id', fetchUser, async (req, res) => {
             return res.status(404).json({ error: "Alumni not found" });
         }
 
-        // Allow deletion if user is Admin OR if user is deleting their own profile
         if (req.user.role !== 'admin' && alumni._id.toString() !== req.user.id) {
             return res.status(403).json({ error: "Admin access required to delete this alumni" });
         }
@@ -102,7 +99,6 @@ router.post('/generate-summary/:id', fetchUser, async (req, res) => {
             return res.status(404).json({ error: "Alumni not found" });
         }
 
-        // Allow summary generation for own profile or admin
         if (req.user.role !== 'admin' && alumni._id.toString() !== req.user.id) {
             return res.status(403).json({ error: "Access denied" });
         }
@@ -129,7 +125,6 @@ router.post('/generate-summary/:id', fetchUser, async (req, res) => {
     }
 });
 
-// Helper function to generate mock insights when API quota is exceeded
 const generateMockInsights = (stats, yearlyPlacements, departmentDistribution) => {
     const placementTrend = yearlyPlacements && yearlyPlacements.length > 0 
         ? yearlyPlacements[yearlyPlacements.length - 1]?.placementPercentage || stats.placementRate
@@ -157,48 +152,43 @@ RECOMMENDATIONS:
 
 // ROUTE 5: Generate AI-powered placement improvement suggestions using: POST "/api/alumni/generate-placement-insights"
 router.post('/generate-placement-insights', fetchUser, async (req, res) => {
-    // Extract data from request body outside try block
+   
     const { stats, yearlyPlacements, departmentDistribution } = req.body;
     
     try {
-        // Only allow admin to generate insights
         if (req.user.role !== 'admin') {
             return res.status(403).json({ error: "Admin access required" });
         }
 
-        // Validate required data
         if (!stats || !yearlyPlacements || !departmentDistribution) {
             return res.status(400).json({ error: "Missing required analytics data" });
         }
 
-        // Ensure yearlyPlacements and departmentDistribution are arrays
         if (!Array.isArray(yearlyPlacements) || !Array.isArray(departmentDistribution)) {
             return res.status(400).json({ error: "Invalid data format: arrays required" });
         }
 
-        // Use a known working model - try models in order of preference
         let model;
         const modelNames = ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-pro"];
         let modelError = null;
         
         for (const modelName of modelNames) {
             try {
-                console.log(`🤖 Attempting to use model: ${modelName}`);
+                console.log(`Attempting to use model: ${modelName}`);
                 model = genAI.getGenerativeModel({ model: modelName });
-                console.log(`✅ Using AI model: ${modelName}`);
+                console.log(`Using AI model: ${modelName}`);
                 break;
             } catch (err) {
                 modelError = err;
-                console.log(`⚠️ Model ${modelName} not available`);
+                console.log(` Model ${modelName} not available`);
             }
         }
         
         if (!model) {
-            console.log("❌ No valid AI model available, using mock insights");
+            console.log(" No valid AI model available, using mock insights");
             return res.json({ insights: generateMockInsights(stats, yearlyPlacements, departmentDistribution) });
         }
         
-        // Create a comprehensive prompt with all the analytics data
         const prompt = `As an AI career counselor and placement strategist, analyze this alumni placement data and provide specific, actionable recommendations to improve the overall placement rate. Focus on data-driven insights and practical strategies.
 
 Current Statistics:
@@ -243,7 +233,6 @@ Keep responses focused and use professional language.`;
         console.error("AI Placement insights generation error:", error.message);
         console.error("Error status:", error.status);
         
-        // On ANY error, fallback to intelligent mock insights
         console.log("📋 Falling back to mock insights based on actual analytics data");
         try {
             const mockInsights = generateMockInsights(stats, yearlyPlacements, departmentDistribution);
@@ -258,12 +247,11 @@ Keep responses focused and use professional language.`;
 // ROUTE 6: Debug endpoint to list available Gemini models
 router.get('/list-models', fetchUser, async (req, res) => {
     try {
-        // Only allow admin to list models
+        
         if (req.user.role !== 'admin') {
             return res.status(403).json({ error: "Admin access required" });
         }
 
-        // Try to list models, but if it fails, provide known working models
         try {
             const models = await genAI.listModels();
             const modelNames = models.map(model => ({
@@ -274,7 +262,6 @@ router.get('/list-models', fetchUser, async (req, res) => {
 
             res.json({ availableModels: modelNames });
         } catch (listError) {
-            // If listModels fails, provide known working models
             const knownModels = [
                 { name: "models/gemini-2.0-flash-exp", displayName: "Gemini 2.0 Flash Experimental", supportedMethods: ["generateContent"] },
                 { name: "models/gemini-1.5-pro", displayName: "Gemini 1.5 Pro", supportedMethods: ["generateContent"] },
@@ -298,27 +285,22 @@ router.post('/contact', fetchUser, async (req, res) => {
     try {
         const { name, email, subject, message } = req.body;
 
-        // Validate required fields
         if (!name || !email || !subject || !message) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
-        // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ error: "Please provide a valid email address" });
         }
 
-        // Get the sender's information from the token
         const sender = await Alumni.findById(req.user.id).select("firstName lastName email");
         if (!sender) {
             return res.status(404).json({ error: "Sender not found" });
         }
 
-        // Generate unique reference ID
         const referenceId = `MSG-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
-        // Save the contact message to database
         const contactMessage = new ContactMessage({
             sender: {
                 id: req.user.id,
@@ -354,7 +336,6 @@ router.post('/contact', fetchUser, async (req, res) => {
 // ROUTE 8: Get all contact messages (Admin only) using: GET "/api/alumni/contact-messages". Login required.
 router.get('/contact-messages', fetchUser, async (req, res) => {
     try {
-        // Only allow admin to view contact messages
         if (req.user.role !== 'admin') {
             return res.status(403).json({ error: "Admin access required" });
         }
@@ -391,7 +372,6 @@ router.get('/contact-messages', fetchUser, async (req, res) => {
 // ROUTE 9: Update contact message status (Admin only) using: PUT "/api/alumni/contact-messages/:id". Login required.
 router.put('/contact-messages/:id', fetchUser, async (req, res) => {
     try {
-        // Only allow admin to update message status
         if (req.user.role !== 'admin') {
             return res.status(403).json({ error: "Admin access required" });
         }

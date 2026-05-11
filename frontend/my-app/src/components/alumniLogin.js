@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react'; // आधुनिक आयकॉन्ससाठी
+import { Mail, Lock, ArrowRight } from 'lucide-react'; 
 
 const AlumniLogin = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -13,7 +13,7 @@ const AlumniLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // १. बॅकएंड API ला कनेक्ट करणे
+      
       const response = await fetch("http://localhost:5000/api/auth/alumnilogin", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -23,15 +23,13 @@ const AlumniLogin = () => {
       const json = await response.json();
 
       if (response.ok && json.authToken) {
-        // २. सर्व आवश्यक माहिती LocalStorage मध्ये साठवणे
+        
         localStorage.setItem('token', json.authToken);
         localStorage.setItem('role', 'alumni');
         localStorage.setItem('userName', json.user.firstName);
         
-        // ३. लॉगिन यशस्वी झाल्यावर डॅशबोर्डवर रिडायरेक्ट करणे
         navigate('/alumniDashboard');
         
-        // पेज रिफ्रेश करून स्टेट अपडेट करण्यासाठी (गरज असल्यास)
         window.location.reload();
       } else {
         alert(json.error || "Invalid Credentials");

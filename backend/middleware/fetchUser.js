@@ -1,24 +1,23 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET; // Make sure this is in your .env file
+const JWT_SECRET = process.env.JWT_SECRET; 
 
 const fetchUser = (req, res, next) => {
-    // Get the user from the jwt token and add id to req object
     const token = req.header('auth-token');
-    console.log('🔐 fetchUser middleware called for path:', req.path);
+    console.log(' fetchUser middleware called for path:', req.path);
     console.log('Token present:', token ? 'YES' : 'NO');
     
     if (!token) {
-        console.log('❌ No token provided');
+        console.log(' No token provided');
         return res.status(401).send({ error: "Access Denied: No token provided" });
     }
 
     try {
         const data = jwt.verify(token, JWT_SECRET);
-        console.log('✅ Token verified, user:', data.user);
+        console.log('Token verified, user:', data.user);
         req.user = data.user;
-        next(); // This moves the request to the next function (your route)
+        next(); 
     } catch (error) {
-        console.log('❌ Token verification failed:', error.message);
+        console.log(' Token verification failed:', error.message);
         res.status(401).send({ error: "Invalid Token" });
     }
 }

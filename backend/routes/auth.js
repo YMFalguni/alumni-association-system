@@ -169,18 +169,18 @@ router.post(
                 role: "alumni",
             });
             
-            console.log("✅ ALUMNI CREATED SUCCESSFULLY!");
+            console.log(" ALUMNI CREATED SUCCESSFULLY!");
             console.log("Saved Record:", user);
             console.log("Alumni ID:", user._id);
             console.log("Database:", user.constructor.db.name);
             console.log("Collection:", user.constructor.collection.name);
-            console.log("=============== END REGISTRATION ===============");
+            console.log(" END REGISTRATION ");
             
             const payload = { user: { id: user.id, role: user.role } };
             const authToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
             res.json({ authToken, success: true, message: "Alumni registered successfully" });
         } catch (err) {
-            console.error("❌ ERROR creating alumni:", err.message);
+            console.error(" ERROR creating alumni:", err.message);
             console.error("Full Error:", err);
             res.status(500).json({ error: err.message || "Internal Server Error" });
         }

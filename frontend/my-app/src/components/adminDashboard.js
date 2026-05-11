@@ -17,9 +17,8 @@ function AdminDashboard() {
     activeEvents: 0
   });
   const [loading, setLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false); // eslint-disable-line no-unused-vars
-  const [lastUpdated, setLastUpdated] = useState(null); // eslint-disable-line no-unused-vars
-
+  const [isRefreshing, setIsRefreshing] = useState(false); 
+  const [lastUpdated, setLastUpdated] = useState(null);
   // 2. Fetch Logic (Keeping your logic intact)
   const fetchDashboardStats = async (showLoadingState = true) => {
     try {
@@ -48,7 +47,6 @@ function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardStats();
-    // Auto-refresh logic like Alumni Dashboard
     intervalRef.current = setInterval(() => fetchDashboardStats(false), 15000);
     return () => clearInterval(intervalRef.current);
   }, []);
@@ -61,8 +59,7 @@ function AdminDashboard() {
     }
   };
 
-  const handleManualRefresh = () => fetchDashboardStats(false); // eslint-disable-line no-unused-vars
-
+  const handleManualRefresh = () => fetchDashboardStats(false); 
   return (
     <div className="flex min-h-screen bg-[#f8fafc] font-sans text-left">
       {/* SIDEBAR - Theme matched with AlumniDashboard */}
@@ -102,14 +99,7 @@ function AdminDashboard() {
             <p className="text-xs text-slate-500">Live tracking & Admin Control</p>
           </div>
           <div className="flex items-center gap-3">
-            {/* <button 
-              onClick={handleManualRefresh}
-              disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl font-semibold text-sm transition-colors border-0 cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
-            </button> */}
+            
             <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">AD</div>
           </div>
         </header>
@@ -151,7 +141,7 @@ function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-4 gap-6">
-            {/* Rohan Sharma */}
+           
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-4 border-slate-50">
                     <img src="https://sscoetjalgaon.ac.in/public/images/top-alumni/team9.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Alumni" className="w-full h-full object-cover" />
@@ -163,7 +153,7 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Aditi Verma */}
+            
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-4 border-slate-50">
                     <img src="https://sscoetjalgaon.ac.in/public/images/top-alumni/team6.jpg?auto=compress&cs=tinysrgb&w=150" alt="Alumni" className="w-full h-full object-cover" />
@@ -175,7 +165,7 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* S. Malhotra */}
+            
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-4 border-slate-50">
                     <img src="https://sscoetjalgaon.ac.in/public/images/top-alumni/team9.jpg?auto=compress&cs=tinysrgb&w=150" alt="Alumni" className="w-full h-full object-cover" />
@@ -187,7 +177,7 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Neha Kapoor */}
+            
             <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-4 border-slate-50">
                     <img src="https://sscoetjalgaon.ac.in/public/images/top-alumni/team8.JPG?auto=compress&cs=tinysrgb&w=150" alt="Alumni" className="w-full h-full object-cover" />

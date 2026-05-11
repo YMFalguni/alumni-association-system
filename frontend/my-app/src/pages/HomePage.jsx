@@ -147,8 +147,8 @@ const HomePage = () => {
             </div>
             <nav className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">About</a>
-              <a href="#alumni" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">Alumni</a>
-              <a href="#events" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">Events</a>
+              {/* <a href="#alumni" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">Alumni</a> */}
+              {/* <a href="#events" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">Events</a> */}
               <a href="#gallery" className="text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors">Gallery</a>
               
             </nav>
@@ -265,7 +265,7 @@ const HomePage = () => {
      
 
       {/* Notable Alumni */}
-      <section id="alumni" className="py-24 bg-slate-900">
+      {/* <section id="alumni" className="py-24 bg-slate-900">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase font-bold text-amber-500 mb-4 block">Our Pride</span>
@@ -307,10 +307,10 @@ const HomePage = () => {
             ))}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Events & News */}
-      <section id="events" className="py-24 bg-white">
+      {/* <section id="events" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase font-bold text-amber-600 mb-4 block">Stay Connected</span>
@@ -373,7 +373,7 @@ const HomePage = () => {
             </motion.div>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* Gallery */}
    
@@ -432,8 +432,8 @@ const HomePage = () => {
               <h4 className="font-heading text-sm font-bold mb-4 uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-2 text-sm">
                 <li><a href="#about" className="text-slate-400 hover:text-amber-500 transition-colors">About Us</a></li>
-                <li><a href="#alumni" className="text-slate-400 hover:text-amber-500 transition-colors">Notable Alumni</a></li>
-                <li><a href="#events" className="text-slate-400 hover:text-amber-500 transition-colors">Events</a></li>
+                {/* <li><a href="#alumni" className="text-slate-400 hover:text-amber-500 transition-colors">Notable Alumni</a></li>
+                <li><a href="#events" className="text-slate-400 hover:text-amber-500 transition-colors">Events</a></li> */}
                 <li><a href="#gallery" className="text-slate-400 hover:text-amber-500 transition-colors">Gallery</a></li>
               </ul>
             </div>

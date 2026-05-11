@@ -34,9 +34,7 @@ function AlumniProfile() {
     try {
       setLoading(true);
       setError(null);
-
-      // localStorage madhle key naav 'token' aahe ki 'authToken' te confirm kar!
-      const token = localStorage.getItem("token");
+       const token = localStorage.getItem("token");
 
       if (!token) {
         console.error("Token not found in localStorage");
@@ -53,7 +51,7 @@ function AlumniProfile() {
         },
       });
 
-      // response status in colsole for debugging
+      
       console.log("Response Status:", response.status);
 
       if (response.status === 401) {
@@ -68,8 +66,6 @@ function AlumniProfile() {
       }
 
       const data = await response.json();
-      // console.log("Profile Data from DB:", data);
-
       setProfile({
         _id: data._id || "",
         firstName: data.firstName || "",
@@ -174,7 +170,7 @@ function AlumniProfile() {
             <Calendar size={18} /> <span className="text-sm">Events</span>
           </Link>
           <Link
-            to="#"
+            to="/contactus"
             className="flex items-center gap-3 w-full p-3 text-slate-400 hover:bg-slate-800 rounded-xl transition-all no-underline"
           >
             <MessageSquare size={18} />{" "}

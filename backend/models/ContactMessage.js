@@ -50,7 +50,6 @@ const ContactMessageSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for better query performance
 ContactMessageSchema.index({ 'sender.id': 1, createdAt: -1 });
 ContactMessageSchema.index({ status: 1, createdAt: -1 });
 

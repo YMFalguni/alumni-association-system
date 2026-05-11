@@ -13,14 +13,13 @@ function AdminAlumni() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  // Dynamically generate years from alumni data
   const years = alumniData.length > 0 
     ? Array.from(new Set(
         alumniData
           .map(a => a.graduationYear)
-          .filter(year => year && !isNaN(year)) // Remove null, undefined, and non-numeric values
+          .filter(year => year && !isNaN(year)) 
       ))
-        .map(Number) // Convert to number for proper sorting
+        .map(Number) 
         .sort((a, b) => a - b)
     : [2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
@@ -299,7 +298,7 @@ function AdminAlumni() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-600">
-                          {person.salary ? `${person.salary} LPA` : 'N/A'}
+                          {person.salary ? `${person.salary}` : 'N/A'}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 

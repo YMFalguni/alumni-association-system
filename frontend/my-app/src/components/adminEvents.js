@@ -18,7 +18,7 @@ function AdminEvents() {
     });
 
     const navigate = useNavigate();
-    const closeBtnRef = useRef(null); // Ref to close modal programmatically
+    const closeBtnRef = useRef(null); 
 
     // 2. Load Events from Backend
     const loadEvents = async () => {
@@ -72,23 +72,19 @@ function AdminEvents() {
 
             if (response.ok) {
                 alert('Event Published Successfully!');
-                
-                // Form clear kara
                 setFormData({ eventName: "", eventDate: "", eventLocation: "", eventDescription: "", eventCapacity: 100 });
                 
-                // Modal close kara using Ref
                 if (closeBtnRef.current) {
                     closeBtnRef.current.click();
                 }
                 
-                // List refresh kara
                 await loadEvents(); 
             } else {
                 alert(json.error || 'Failed to save the event.');
             }
         } catch (error) {
             console.error('Error saving event:', error);
-            alert('Something went wrong. Backend chalu aahe ka check kara.');
+            alert('Something went wrong. check weather the backend is running.');
         } finally {
             setIsPublishing(false);
         }

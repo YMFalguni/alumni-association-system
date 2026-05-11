@@ -67,7 +67,7 @@ function AlumniEvent() {
                     <Link to="/alumniEvent" className="flex items-center gap-3 w-full p-3 bg-amber-600/10 text-amber-500 rounded-xl border border-amber-600/20 no-underline">
                         <Calendar size={18} /> <span className="text-sm font-semibold">Events</span>
                     </Link>
-                    <Link to="#" className="flex items-center gap-3 w-full p-3 text-slate-400 hover:bg-slate-800 rounded-xl transition-all no-underline">
+                    <Link to="/contactus" className="flex items-center gap-3 w-full p-3 text-slate-400 hover:bg-slate-800 rounded-xl transition-all no-underline">
                         <MessageSquare size={18} /> <span className="text-sm">Contact Us</span>
                     </Link>
                 </nav>
